@@ -485,7 +485,7 @@
                     <h3 class="card-title">Uzytkownicy</h3>
 
                     <div class="card-tools">
-                      <span class="badge badge-danger">? uzytkownikow</span>
+                      <span class="badge badge-danger">? ilosc uzytkownikow</span>
                       <button type="button" class="btn btn-tool" data-card-widget="collapse">
                         <i class="fas fa-minus"></i>
                       </button>
@@ -497,7 +497,6 @@
                   <!-- /.card-header -->
                   <div class="card-body p-0">
                     <ul class="users-list clearfix">
-
 
                     <?php
                     require_once "../scripts/connect.php";
