@@ -483,9 +483,19 @@
                 <div class="card">
                   <div class="card-header">
                     <h3 class="card-title">Uzytkownicy</h3>
-
                     <div class="card-tools">
-                      <span class="badge badge-danger">? ilosc uzytkownikow</span>
+                    <span class="badge badge-danger">
+
+                    <?php
+                    require_once "../scripts/connect.php";
+                    $stmt = $conn->prepare("SELECT u.firstName, u.lastName, r.role FROM users u INNER JOIN roles r on u.role_id = r.id");
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    $countUsers = $result->num_rows;
+                    echo $countUsers." uzytkowników";
+
+                    ?>
+                      </span>
                       <button type="button" class="btn btn-tool" data-card-widget="collapse">
                         <i class="fas fa-minus"></i>
                       </button>
@@ -499,11 +509,7 @@
                     <ul class="users-list clearfix">
 
                     <?php
-                    require_once "../scripts/connect.php";
-                    $stmt = $conn->prepare("SELECT u.firstName, u.lastName, r.role FROM users u INNER JOIN roles r on u.role_id = r.id");
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    $countUsers = $result->num_rows;
+                    
                     while($user = $result->fetch_assoc()){
                       echo <<< USER
                         <li>
