@@ -32,9 +32,15 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST'){
 	$result = $stmt->get_result();
 	//echo $result->num_rows;
 
+
+
+
 	$error = 0;
 	if ($result->num_rows != 0){
 		$user = $result->fetch_assoc();
+		$user_id = $user["id"];
+
+		$address_ip = $_SERVER["REMOTE_ADDR"];
 		//print_r($user);
 //		echo password_verify($_POST["pass"], $user["password"]);
 		if (password_verify($_POST["pass"], $user["password"])){
@@ -43,10 +49,21 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST'){
 			$_SESSION["logged"]["role_id"] = $user["role_id"];
 			$_SESSION["logged"]["session_id"] = session_id();
 			//print_r($_SESSION["logged"]);
+
+			//log
+			$stmt = $conn->prepare("INSERT INTO `login` (`user_id`, `status`, `address_ip`) VALUES (?, '1', ?);");
+	        $stmt->bind_param("is", $user_id, $address_ip);
+	        $stmt->execute();
+
+
 			header("location: ../pages/logged.php");
 			exit();
 		}else{
 			$error = 1;
+			//log
+			$stmt = $conn->prepare("INSERT INTO `login` (`user_id`, `status`, `address_ip`) VALUES (?, '0', ?);");
+	        $stmt->bind_param("is", $user_id, $address_ip);
+	        $stmt->execute();
 		}
 	}else{
 		$error = 1;

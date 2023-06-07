@@ -97,7 +97,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
 
 	$pass = password_hash($_POST["pass1"], PASSWORD_DEFAULT);
 
-	$avatar = ($_POST["gender"] == 'm') ? './jpg/man.png' : './jpg/woman.png';
+	$avatar = ($_POST["gender"] == 'm') ? './img/man.jpeg' : './img/woman.png';
 
 	$stmt->bind_param('ssissssss', $_POST["email1"], $_POST["additional_email1"], $_POST["city_id"], $_POST["firstName"], $_POST["lastName"], $_POST["birthday"], $_POST["gender"], $avatar, $pass);
 

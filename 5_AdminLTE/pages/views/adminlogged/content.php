@@ -482,13 +482,13 @@
                 <!-- USERS LIST -->
                 <div class="card">
                   <div class="card-header">
-                    <h3 class="card-title">Uzytkownicy</h3>
+                    <h3 class="card-title">Logowanie uzytkownika</h3>
                     <div class="card-tools">
                     <span class="badge badge-danger">
 
                     <?php
                     require_once "../scripts/connect.php";
-                    $stmt = $conn->prepare("SELECT u.firstName, u.lastName, r.role FROM users u INNER JOIN roles r on u.role_id = r.id");
+                    $stmt = $conn->prepare("SELECT u.firstName, u.lastName, l.created_at, l.status, u.avatar FROM users u INNER JOIN login l on l.user_id = u.id order by l.created_at desc limit 6");
                     $stmt->execute();
                     $result = $stmt->get_result();
                     $countUsers = $result->num_rows;
@@ -511,13 +511,20 @@
                     <?php
                     
                     while($user = $result->fetch_assoc()){
+                      if($user["status"] == 1) {
+                        $logged =  "zalogowany";
+                      }else{
+                        $logged = "niezalogowany";
+                      }
+
                       echo <<< USER
                         <li>
-                          <img src="../dist/img/user1-128x128.jpg" alt="User Image">
-                          <a class="users-list-name" href="#">$user[firstName] $user[lastName]</a>
-                          <span class="users-list-date">$user[role]</span>
-                                            </li>
-  USER;
+                            <img src="../$user[avatar]" alt="User Image">
+                            <a class="users-list-name" href="#">$user[firstName] $user[lastName]</a>
+                               <span class="users-list-date">$logged</span>
+                               <span class="users-list-date">$user[created_at]</span>
+                        </li>
+                     USER;
                     }
                     /*
                     foreach($result as $val){
@@ -549,6 +556,102 @@
             </div>
             <!-- /.row -->
 
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">DataTables</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                
+                <div id="example1_wrapper" class="dataTables_wrapper dt-bootstrap4"><div class="row"><div class="col-sm-12 col-md-6"><div class="dt-buttons btn-group flex-wrap">               <button class="btn btn-secondary buttons-copy buttons-html5" tabindex="0" aria-controls="example1" type="button"><span>Copy</span></button> <button class="btn btn-secondary buttons-csv buttons-html5" tabindex="0" aria-controls="example1" type="button"><span>CSV</span></button> <button class="btn btn-secondary buttons-excel buttons-html5" tabindex="0" aria-controls="example1" type="button"><span>Excel</span></button> <button class="btn btn-secondary buttons-pdf buttons-html5" tabindex="0" aria-controls="example1" type="button"><span>PDF</span></button> <button class="btn btn-secondary buttons-print" tabindex="0" aria-controls="example1" type="button"><span>Print</span></button> <div class="btn-group"><button class="btn btn-secondary buttons-collection dropdown-toggle buttons-colvis" tabindex="0" aria-controls="example1" type="button" aria-haspopup="true"><span>Column visibility</span><span class="dt-down-arrow"></span></button></div> </div></div><div class="col-sm-12 col-md-6"><div id="example1_filter" class="dataTables_filter"><label>Search:<input type="search" class="form-control form-control-sm" placeholder="" aria-controls="example1"></label></div></div></div><div class="row"><div class="col-sm-12"><table id="example1" class="table table-bordered table-striped dataTable dtr-inline" aria-describedby="example1_info">
+                  <thead>
+                  <tr><th class="sorting sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Rendering engine: activate to sort column descending">Imie</th><th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-label="Browser: activate to sort column ascending">Nazwisko</th><th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-label="Platform(s): activate to sort column ascending">Miasto</th><th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-label="Engine version: activate to sort column ascending">Data utworzenia</th><th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending">Data ostatniego logowania</th><th class="sorting sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Rendering engine: activate to sort column descending">Rola</th></tr>
+                  
+                  </thead>
+                  <tbody>
+
+                  <?php
+                require_once "../scripts/connect.php";
+                $stmt = $conn->prepare("SELECT u.firstName, u.lastName, c.city, u.created_at, l.created_at, r.role FROM users u INNER JOIN cities c on c.id = u.city_id INNER JOIN roles r on r.id = u.role_id  INNER JOIN login l on l.user_id = u.id");
+                $stmt->execute();
+                $result = $stmt->get_result();
+
+                while($users = $result->fetch_assoc()){
+                
+                echo <<< USERS
+
+                  <tr class="odd">
+                    <td class="dtr-control sorting_1" tabindex="0">$users[firstName]</td>
+                    <td>$users[lastName]</td>
+                    <td>$users[city]</td>
+                    <td>$users[created_at]</td>
+                    <td>$users[created_at]</td>
+                    <td>$users[role]</td>
+                  </tr><tr class="even">
+                    <td class="dtr-control sorting_1" tabindex="0">$usesr[lastName]</td>
+                    <td>Firefox 1.5</td>
+                    <td>Win 98+ / OSX.2+</td>
+                    <td>1.8</td>
+                    <td>A</td>
+                  </tr><tr class="odd">
+                    <td class="dtr-control sorting_1" tabindex="0">Gecko</td>
+                    <td>Firefox 2.0</td>
+                    <td>Win 98+ / OSX.2+</td>
+                    <td>1.8</td>
+                    <td>A</td>
+                  </tr><tr class="even">
+                    <td class="dtr-control sorting_1" tabindex="0">Gecko</td>
+                    <td>Firefox 3.0</td>
+                    <td>Win 2k+ / OSX.3+</td>
+                    <td>1.9</td>
+                    <td>A</td>
+                  </tr><tr class="odd">
+                    <td class="sorting_1 dtr-control">Gecko</td>
+                    <td>Camino 1.0</td>
+                    <td>OSX.2+</td>
+                    <td>1.8</td>
+                    <td>A</td>
+                  </tr><tr class="even">
+                    <td class="sorting_1 dtr-control">Gecko</td>
+                    <td>Camino 1.5</td>
+                    <td>OSX.3+</td>
+                    <td>1.8</td>
+                    <td>A</td>
+                  </tr><tr class="odd">
+                    <td class="sorting_1 dtr-control">Gecko</td>
+                    <td>Netscape 7.2</td>
+                    <td>Win 95+ / Mac OS 8.6-9.2</td>
+                    <td>1.7</td>
+                    <td>A</td>
+                  </tr><tr class="even">
+                    <td class="sorting_1 dtr-control">Gecko</td>
+                    <td>Netscape Browser 8</td>
+                    <td>Win 98SE+</td>
+                    <td>1.7</td>
+                    <td>A</td>
+                  </tr><tr class="odd">
+                    <td class="sorting_1 dtr-control">Gecko</td>
+                    <td>Netscape Navigator 9</td>
+                    <td>Win 98+ / OSX.2+</td>
+                    <td>1.8</td>
+                    <td>A</td>
+                  </tr><tr class="even">
+                    <td class="sorting_1 dtr-control">Gecko</td>
+                    <td>Mozilla 1.0</td>
+                    <td>Win 95+ / OSX.1+</td>
+                    <td>1</td>
+                    <td>A</td>
+                  </tr></tbody>
+                  </table></div></div><div class="row"><div class="col-sm-12 col-md-5"><div class="dataTables_info" id="example1_info" role="status" aria-live="polite">Showing 1 to 10 of 57 entries</div></div><div class="col-sm-12 col-md-7"><div class="dataTables_paginate paging_simple_numbers" id="example1_paginate"><ul class="pagination"><li class="paginate_button page-item previous disabled" id="example1_previous"><a href="#" aria-controls="example1" data-dt-idx="0" tabindex="0" class="page-link">Previous</a></li><li class="paginate_button page-item active"><a href="#" aria-controls="example1" data-dt-idx="1" tabindex="0" class="page-link">1</a></li><li class="paginate_button page-item "><a href="#" aria-controls="example1" data-dt-idx="2" tabindex="0" class="page-link">2</a></li><li class="paginate_button page-item "><a href="#" aria-controls="example1" data-dt-idx="3" tabindex="0" class="page-link">3</a></li><li class="paginate_button page-item "><a href="#" aria-controls="example1" data-dt-idx="4" tabindex="0" class="page-link">4</a></li><li class="paginate_button page-item "><a href="#" aria-controls="example1" data-dt-idx="5" tabindex="0" class="page-link">5</a></li><li class="paginate_button page-item "><a href="#" aria-controls="example1" data-dt-idx="6" tabindex="0" class="page-link">6</a></li><li class="paginate_button page-item next" id="example1_next"><a href="#" aria-controls="example1" data-dt-idx="7" tabindex="0" class="page-link">Next</a></li></ul></div></div></div></div>
+USERS;
+                }
+                  ?>
+               
+                
+
+              </div>
+              <!-- /.card-body -->
+            </div>
             <!-- TABLE: LATEST ORDERS -->
             <div class="card">
               <div class="card-header border-transparent">
